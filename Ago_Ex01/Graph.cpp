@@ -67,3 +67,21 @@ int FindPosition(vector<Pair> const &AdjListU, int v)
     }
     return flag ? position : -1;
 }
+
+void Graph::ChangeCapacity(int u, int v, int c, bool operation)
+{
+    for (Pair w : adjList[u])
+    {
+        if (w.first == v)
+        {
+            if (operation) 
+            {
+                w.second += c;
+            }
+            else
+            {
+                w.second -= c;
+            }
+        }
+    }
+}
