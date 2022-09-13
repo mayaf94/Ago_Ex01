@@ -68,12 +68,13 @@ bool FordFulkersonAlgorithm::DijkstraModificationToFindMaximumFlowPath(Graph rGr
                 }
             }
         }
-
-        if(d[t] != INT_MIN){
-            return true;
-        }
-        return false;
     }
+
+    ignoreVertexCopy.clear();
+    if(d[t] != INT_MIN){
+        return true;
+    }
+    return false;
 
 
 }
