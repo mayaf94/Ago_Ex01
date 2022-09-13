@@ -86,3 +86,22 @@ string* InputTest::GettingParams(int max, bool canBeZero)
 	}
 	return NULL;
 }
+
+void InputTest::CheckIfNumberInBorder(int num, int max, bool hasBorder)
+{
+	if (hasBorder) {
+		if (num > max || num < 0)
+		{
+			cout << "invalid input";
+			exit(1);
+		}
+	}
+	else
+	{
+		if (num < 0)
+		{
+			cout << "invalid input";
+			exit(1);
+		}
+	}
+}

@@ -140,7 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Edge.h" />
-    <ClInclude Include="FordFulkersonAlgorithem.h" />
+    <ClInclude Include="FordFulkersonAlgorithm.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="InputTest.h" />
   </ItemGroup>

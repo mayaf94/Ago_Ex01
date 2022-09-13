@@ -117,7 +117,7 @@ void Graph::PrintGroup(bool flag)
             if (i == S.size() - 1)
                 cout << S[i] + 1 << ".";
             else
-                cout << S[i] + 1 << ",";
+                cout << S[i] + 1 << ", ";
         }
         S.clear();
     }
@@ -127,7 +127,7 @@ void Graph::PrintGroup(bool flag)
             if (i == T.size() - 1)
                 cout << T[i] + 1;
             else
-                cout << T[i] + 1 << ",";
+                cout << T[i] + 1 << ", ";
         }
         T.clear();
     }

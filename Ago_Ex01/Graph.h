@@ -8,7 +8,7 @@ using std::vector;
 
 typedef pair<int, int> Pair;
 
-typedef class Graph{
+class Graph{
 private:
 	vector<vector<Pair>> adjList;
 	vector<int> S;

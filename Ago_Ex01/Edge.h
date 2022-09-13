@@ -1,7 +1,7 @@
 #ifndef EDGE_H
 #define EDGE_H
 
-typedef struct Edge {
+struct Edge {
 
 	int start;
 	int dest;

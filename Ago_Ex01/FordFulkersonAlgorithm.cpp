@@ -1,4 +1,4 @@
-#include "FordFulkersonAlgorithem.h"
+#include "FordFulkersonAlgorithm.h"
 
 using namespace std;
 int getCapacityFromPair(vector<Pair> const& AdjListU, int v);
@@ -6,36 +6,23 @@ bool CheckPoints(int u, vector<Pair> const& AdjListV);
 void initVisitedArr(vector<bool> & visited, int n);
 void ResetParents(vector<int>& parent);
 
-
-/* Returns true if there is a path from source 's' to sink
-  't' in residual graph. Also fills parent[] to store the
-  path */
-bool FordFulkersonAlgorithem::bfs(Graph &rGraph, int s, int t, vector<int> & parent){
-// Create a visited array and mark all vertices as not
-    // visited
+bool FordFulkersonAlgorithm::bfs(Graph &rGraph, int s, int t, vector<int> & parent){
     vector<bool> visited;
     initVisitedArr(visited, rGraph.GraphSize());
 
-
-    // Create a queue, enqueue source vertex and mark source
-    // vertex as visited
     queue<int> q;
     q.push(s);
     visited[s] = true;
     ResetParents(parent);
     parent[s] = -1;
 
-    // Standard BFS Loop
     while (!q.empty()) {
         int u = q.front();
         q.pop();
 
         for (Pair v: rGraph.GetAdjList(u)) {
             if (visited[v.first] == false &&  v.second > 0) {
-                // If we find a connection to the sink node,
-                // then there is no point in BFS anymore We
-                // just have to set its parent and can return
-                // true
+              
                 if (v.first == t) {
                     parent[v.first] = u;
                     return true;
@@ -47,16 +34,14 @@ bool FordFulkersonAlgorithem::bfs(Graph &rGraph, int s, int t, vector<int> & par
         }
     }
 
-    // We didn't reach sink in BFS starting from source, so
-    // return false
     return false;
 }
 
-bool FordFulkersonAlgorithem::DijkstraModificationToFindMaximumFlowPath(Graph rGraph, int s, int t, vector<int>& parent){
+bool FordFulkersonAlgorithm::DijkstraModificationToFindMaximumFlowPath(Graph rGraph, int s, int t, vector<int>& parent){
     vector<int> d;
     initDijkstra(d,parent,s,t);
     buildPriorityQueue(d,parent,s,t);
-    std::pair<int,int> curVertex;//<Dval,vertex>
+    std::pair<int,int> curVertex;/*<Dval,vertex>*/
     while(!MaxQueue.empty()){
         curVertex.first = MaxQueue.top().first;
         curVertex.second = MaxQueue.top().second;
@@ -72,10 +57,11 @@ bool FordFulkersonAlgorithem::DijkstraModificationToFindMaximumFlowPath(Graph rG
                     RCapacityPathWithCurNeighbor = v.second;
                 }
                 else {
-                    if (v.second == 0) {
-                        continue;
-                    }
+                 
                     RCapacityPathWithCurNeighbor = min(d[curVertex.second], v.second);
+                }
+                if (v.second == 0) {
+                    continue;
                 }
                 if (d[v.first] < RCapacityPathWithCurNeighbor) {
                     d[v.first] = RCapacityPathWithCurNeighbor;
@@ -95,27 +81,29 @@ bool FordFulkersonAlgorithem::DijkstraModificationToFindMaximumFlowPath(Graph rG
 
 }
 
-void FordFulkersonAlgorithem::initDijkstra(vector<int>& d,vector<int>& p,int s,int t){
-    d.push_back(INT_MAX);
+void FordFulkersonAlgorithm::initDijkstra(vector<int>& d,vector<int>& p,int s,int t){
     p[s] = -1;
     for(int i = 0 ; i < p.size(); i++){
         if (i != s){
             d.push_back(INT_MIN);
-           
+
             p[i] = -1;
 
+        }
+        else {
+            d.push_back(INT_MAX);
         }
         ignoreVertexCopy.push_back(false);
     }
 }
 
-Edge FordFulkersonAlgorithem::makeEdge(int u, int v, int c)
+Edge FordFulkersonAlgorithm::makeEdge(int u, int v, int c)
 {
     Edge edge = { u, v, c };
     return edge;
 }
 
-void FordFulkersonAlgorithem::buildPriorityQueue(vector<int> &d, vector<int> &p, int s, int t) {
+void FordFulkersonAlgorithm::buildPriorityQueue(vector<int> &d, vector<int> &p, int s, int t) {
     d[s] = 0;
     p[s] = -1;
     MaxQueue.push(make_pair(d[s],s));
@@ -128,7 +116,7 @@ void FordFulkersonAlgorithem::buildPriorityQueue(vector<int> &d, vector<int> &p,
 
 }
 
-int  FordFulkersonAlgorithem::getCapacityFromPair(vector<Pair> const& AdjListU, int v)
+int  FordFulkersonAlgorithm::getCapacityFromPair(vector<Pair> const& AdjListU, int v)
 {
     int capacity = 0;
     for (Pair w : AdjListU)
@@ -141,7 +129,7 @@ int  FordFulkersonAlgorithem::getCapacityFromPair(vector<Pair> const& AdjListU, 
     return capacity;
 }
 
-int FordFulkersonAlgorithem::fordFulkerson(Graph & graph, int s, int t, bool searchMode)
+int FordFulkersonAlgorithm::fordFulkerson(Graph & graph, int s, int t, bool searchMode)
 {
     int n = graph.GraphSize();
     int u, v;
@@ -164,14 +152,11 @@ int FordFulkersonAlgorithem::fordFulkerson(Graph & graph, int s, int t, bool sea
         parent.push_back(-1);
     }
 
-    int max_flow = 0; // There is no flow initially
+    int max_flow = 0; 
 
-    // Augment the flow while there is path from source to
-    // sink
+
     while (searchMode ? bfs(rGraph, s, t, parent) : DijkstraModificationToFindMaximumFlowPath(rGraph, s, t, parent)) {
-        // Find minimum residual capacity of the edges along
-        // the path filled by BFS. Or we can say find the
-        // maximum flow through the path found.
+
         int path_flow = INT_MAX;
 
         for (v = t; v != s; v = parent[v]) {
@@ -179,8 +164,6 @@ int FordFulkersonAlgorithem::fordFulkerson(Graph & graph, int s, int t, bool sea
             path_flow = min(path_flow, getCapacityFromPair(rGraph.GetAdjList(u), v));
         }
 
-        // update residual capacities of the edges and
-        // reverse edges along the path
         for (v = t; v != s; v = parent[v])
         {
             u = parent[v];
@@ -188,11 +171,9 @@ int FordFulkersonAlgorithem::fordFulkerson(Graph & graph, int s, int t, bool sea
             rGraph.ChangeCapacity(v, u, path_flow, true);
         }
 
-        // Add path flow to overall flow
         max_flow += path_flow;
     }
 
-    // Return the overall flow
     bfs(rGraph, s, t, parent);
     graph.MinCut(parent, s, t, n);
     return max_flow;

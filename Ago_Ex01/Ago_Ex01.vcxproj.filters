@@ -24,7 +24,7 @@
     <ClInclude Include="InputTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FordFulkersonAlgorithem.h">
+    <ClInclude Include="FordFulkersonAlgorithm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
