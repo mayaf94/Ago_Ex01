@@ -1,7 +1,3 @@
-#include <iostream>
-#include <limits.h>
-#include <queue>
-#include <string.h>
 #include "FordFulkersonAlgorithem.h"
 
 using namespace std;
@@ -13,9 +9,8 @@ void initVisitedArr(bool* visited, int n);
 /* Returns true if there is a path from source 's' to sink
   't' in residual graph. Also fills parent[] to store the
   path */
-bool bfs(Graph &rGraph, int s, int t, int parent[])
-{
-    // Create a visited array and mark all vertices as not
+bool FordFulkersonAlgorithm::bfs(Graph &rGraph, int s, int t, int parent[]){
+// Create a visited array and mark all vertices as not
     // visited
     bool* visited = new bool[rGraph.GraphSize()];
     //memset(visited, 0, sizeof(visited));
@@ -54,6 +49,85 @@ bool bfs(Graph &rGraph, int s, int t, int parent[])
     // We didn't reach sink in BFS starting from source, so
     // return false
     return false;
+}
+
+bool FordFulkersonAlgorithm::DijkstraModificationToFindMaximumFlowPath(Graph rGraph, int s, int t, vector<int>& parent){
+    vector<int> d;
+    initDijkstra(d,parent,s,t);
+    buildPriorityQueue(d,parent,s,t);
+    std::pair<int,int> curVertex;//<vertex,Dval>
+    while(!MaxQueue.empty()){
+        curVertex.first = MaxQueue.top().first;
+        curVertex.second = MaxQueue.top().second;
+        MaxQueue.pop();
+        if(ignoreVertexCopy[curVertex.first]){
+            continue;
+        }
+        ignoreVertexCopy[curVertex.first] = true;
+        for (Pair v : rGraph.GetAdjList(curVertex.first)) {
+            if(v.first != s) {
+                int RCapacityPathWithCurNeighbor = min(d[curVertex.first], v.second);
+                if (d[v.first] < RCapacityPathWithCurNeighbor) {
+                    d[v.first] = RCapacityPathWithCurNeighbor;
+                    parent[v.first] = curVertex.first;
+                    MaxQueue.push(make_pair(d[v.first], v.first));
+                }
+            }
+        }
+    }
+
+    ignoreVertexCopy.clear();
+    if(d[t] != INT_MIN){
+        return true;
+    }
+    return false;
+
+
+}
+
+void FordFulkersonAlgorithm::initDijkstra(vector<int>& d,vector<int>& p,int s,int t){
+    d.push_back(INT_MAX);
+    p[s] = -1;
+    for(int i = 0 ; i < d.size(); i++){
+        if (i != s){
+            d.push_back(INT_MIN);
+            ignoreVertexCopy.push_back(false);
+            p[i] = -1;
+
+        }
+    }
+}
+
+Edge FordFulkersonAlgorithm::makeEdge(int u, int v, int c)
+{
+    Edge edge = { u, v, c };
+    return edge;
+}
+
+void FordFulkersonAlgorithm::buildPriorityQueue(vector<int> &d, vector<int> &p, int s, int t) {
+    d[s] = 0;
+    p[s] = -1;
+    MaxQueue.push(make_pair(d[s],s));
+    for (int i = 0; i < d.size(); i++){
+        if (i != s){;
+            MaxQueue.push(make_pair(d[i], i));
+        }
+    }
+
+
+}
+
+int  FordFulkersonAlgorithm::getCapacityFromPair(vector<Pair> const& AdjListU, int v)
+{
+    int capacity = 0;
+    for (Pair w : AdjListU)
+    {
+        if (w.first == v)
+        {
+            capacity = w.second;
+        }
+    }
+    return capacity;
 }
 
 // Returns the maximum flow from s to t in the given graph
@@ -114,6 +188,7 @@ int FordFulkersonAlgorithem::fordFulkerson(Graph graph, int s, int t)
     // Return the overall flow
     return max_flow;
 }
+
 
 int getCapacityFromPair(vector<Pair> const& AdjListU, int v)
 {

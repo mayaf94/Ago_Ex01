@@ -40,35 +40,35 @@ void Graph::AddEdge(int u, int v, int c)
     adjList[u].push_back(make_pair(v, c));
 }
 
-void Graph::RemoveEdge(int u, int v)//Check
-{
-    int position = FindPosition(adjList[u], v);
-
-    if (position != -1) 
-    {
-        adjList[u].erase(adjList[u].begin() + position);
-    }
-}
-
 int FindPosition(vector<Pair> const &AdjListU, int v)
 {
     int position = 0;
     bool flag = false;
 
-    for (Pair w : AdjListU) 
+    for (Pair w : AdjListU)
     {
-        if (w.first == v) 
+        if (w.first == v)
         {
             flag = true;
             break;
         }
-        else 
+        else
         {
             position++;
         }
     }
     return flag ? position : -1;
 }
+void Graph::RemoveEdge(int u, int v)//Check
+{
+    int position = FindPosition(adjList[u], v);
+
+    if (position != -1)
+    {
+        adjList[u].erase(adjList[u].begin() + position);
+    }
+}
+
 
 void Graph::ChangeCapacity(int u, int v, int c, bool operation)
 {
