@@ -5,6 +5,8 @@ using std::cout;
 using std::endl;
 using std::make_pair;
 
+int FindPosition(vector<Pair> const& AdjListU, int v);
+
 Graph::Graph(vector<Edge> const& points, int n) {
 	adjList.resize(n);
 
@@ -84,4 +86,10 @@ void Graph::ChangeCapacity(int u, int v, int c, bool operation)
             }
         }
     }
+}
+
+Edge Graph::makeEdge(int u, int v, int c)
+{
+    Edge edge = { u, v, c };
+    return edge;
 }

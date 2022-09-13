@@ -2,9 +2,11 @@
 #include <limits.h>
 #include <queue>
 #include <string.h>
-#include "Graph.h"
+#include "FordFulkersonAlgorithem.h"
 
 using namespace std;
+int getCapacityFromPair(vector<Pair> const& AdjListU, int v);
+
 
 /* Returns true if there is a path from source 's' to sink
   't' in residual graph. Also fills parent[] to store the
@@ -51,7 +53,7 @@ bool bfs(Graph &rGraph, int s, int t, int parent[])
 }
 
 // Returns the maximum flow from s to t in the given graph
-int fordFulkerson(Graph graph, int s, int t)
+int FordFulkersonAlgorithem::fordFulkerson(Graph graph, int s, int t)
 {
     int n = graph.GraphSize();
     int u, v;
@@ -64,8 +66,8 @@ int fordFulkerson(Graph graph, int s, int t)
     {
         for (Pair v : graph.GetAdjList(u)) 
         {
-            points.push_back(makeEdge(u, v.first, v.second));
-            points.push_back(makeEdge(v.first, u, 0));
+            points.push_back(Graph::makeEdge(u, v.first, v.second));
+            points.push_back(Graph::makeEdge(v.first, u, 0));
         }
     }
     Graph rGraph(points, n);
@@ -106,12 +108,6 @@ int fordFulkerson(Graph graph, int s, int t)
 
     // Return the overall flow
     return max_flow;
-}
-
-Edge makeEdge(int u, int v, int c)
-{
-    Edge edge = { u, v, c };
-    return edge;
 }
 
 int getCapacityFromPair(vector<Pair> const& AdjListU, int v)
