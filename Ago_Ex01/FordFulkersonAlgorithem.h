@@ -1,18 +1,34 @@
-#ifndef FORDFULKERSONALGORITHEM_H
-#define FORDFULKERSONALGORITHEM_H
-#include <vector>
-#include <iostream>
-#include "Edge.h"
+#ifndef AGO_EX01_FORDFULKERSONALGORITHEM_H
+#define AGO_EX01_FORDFULKERSONALGORITHEM_H
 #include "Graph.h"
+#include <iostream>
+#include <limits.h>
+#include <queue>
+#include <string.h>
+#include "Edge.h"
+using namespace std;
 
-using std::pair;
-using std::vector;
 
-
-typedef class FordFulkersonAlgorithem 
-{
+class FordFulkersonAlgorithem {
+private:
+    std::priority_queue<pair<int, int>> MaxQueue;
+    vector<bool> ignoreVertexCopy;
+    void buildPriorityQueue(vector<int>& d, vector<int>& p, int s, int t);
 public:
-	static int fordFulkerson(Graph graph, int s, int t);
-};
+    int fordFulkerson(Graph & graph, int s, int t, bool searchMode);
 
-#endif
+    bool bfs(Graph& rGraph, int s, int t, vector<int> & parent);
+
+    bool DijkstraModificationToFindMaximumFlowPath(Graph rGraph, int s, int t, vector<int>& parent);
+
+    void initDijkstra(vector<int>& d, vector<int>& p, int s, int t);
+
+    Edge makeEdge(int u, int v, int c);
+
+    int getCapacityFromPair(vector<Pair> const& AdjListU, int v);
+
+
+
+
+};
+#endif //AGO_EX01_FORDFULKERSONALGORITHM_H

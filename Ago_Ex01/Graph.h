@@ -11,6 +11,8 @@ typedef pair<int, int> Pair;
 typedef class Graph{
 private:
 	vector<vector<Pair>> adjList;
+	vector<int> S;
+	vector<int> T;
 
 public:
 	Graph(vector<Edge> const& points, int n);
@@ -22,6 +24,8 @@ public:
 	int GraphSize() { return adjList.size(); }
 	void ChangeCapacity(int u, int v, int c, bool operation);
 	static Edge makeEdge(int u, int v, int c);
+	void MinCut(vector<int> parent, int s, int t, int n);
+	void PrintGroup(bool flage);
 };
 
 #endif

@@ -87,3 +87,48 @@ Edge Graph::makeEdge(int u, int v, int c)
     Edge edge = { u, v, c };
     return edge;
 }
+
+void Graph::MinCut(vector<int> parent, int s, int t, int n)
+{
+    for (int i = 0; i < n; i++) 
+    {
+        if (i == s) {
+            S.push_back(s);
+        }
+        else if (i == t) {
+            T.push_back(t);
+        }
+        else if (parent[i] == -1) {
+            T.push_back(i);
+        }
+        else
+        {
+            S.push_back(i);
+        }
+    }
+}
+
+void Graph::PrintGroup(bool flag) 
+{
+    if (flag)
+    {
+        for (int i = 0; i < S.size(); i++)
+        {
+            if (i == S.size() - 1)
+                cout << S[i] + 1 << ".";
+            else
+                cout << S[i] + 1 << ",";
+        }
+        S.clear();
+    }
+    else
+    {
+        for (int i = 0; i < T.size(); i++) {
+            if (i == T.size() - 1)
+                cout << T[i] + 1;
+            else
+                cout << T[i] + 1 << ",";
+        }
+        T.clear();
+    }
+}

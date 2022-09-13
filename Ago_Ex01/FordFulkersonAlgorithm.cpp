@@ -3,17 +3,17 @@
 using namespace std;
 int getCapacityFromPair(vector<Pair> const& AdjListU, int v);
 bool CheckPoints(int u, vector<Pair> const& AdjListV);
-void initVisitedArr(bool* visited, int n);
+void initVisitedArr(vector<bool> & visited, int n);
+void ResetParents(vector<int>& parent);
 
 
 /* Returns true if there is a path from source 's' to sink
   't' in residual graph. Also fills parent[] to store the
   path */
-bool FordFulkersonAlgorithm::bfs(Graph &rGraph, int s, int t, int parent[]){
+bool FordFulkersonAlgorithem::bfs(Graph &rGraph, int s, int t, vector<int> & parent){
 // Create a visited array and mark all vertices as not
     // visited
-    bool* visited = new bool[rGraph.GraphSize()];
-    //memset(visited, 0, sizeof(visited));
+    vector<bool> visited;
     initVisitedArr(visited, rGraph.GraphSize());
 
 
@@ -22,6 +22,7 @@ bool FordFulkersonAlgorithm::bfs(Graph &rGraph, int s, int t, int parent[]){
     queue<int> q;
     q.push(s);
     visited[s] = true;
+    ResetParents(parent);
     parent[s] = -1;
 
     // Standard BFS Loop
@@ -51,25 +52,34 @@ bool FordFulkersonAlgorithm::bfs(Graph &rGraph, int s, int t, int parent[]){
     return false;
 }
 
-bool FordFulkersonAlgorithm::DijkstraModificationToFindMaximumFlowPath(Graph rGraph, int s, int t, vector<int>& parent){
+bool FordFulkersonAlgorithem::DijkstraModificationToFindMaximumFlowPath(Graph rGraph, int s, int t, vector<int>& parent){
     vector<int> d;
     initDijkstra(d,parent,s,t);
     buildPriorityQueue(d,parent,s,t);
-    std::pair<int,int> curVertex;//<vertex,Dval>
+    std::pair<int,int> curVertex;//<Dval,vertex>
     while(!MaxQueue.empty()){
         curVertex.first = MaxQueue.top().first;
         curVertex.second = MaxQueue.top().second;
         MaxQueue.pop();
-        if(ignoreVertexCopy[curVertex.first]){
+        if(ignoreVertexCopy[curVertex.second]){
             continue;
         }
-        ignoreVertexCopy[curVertex.first] = true;
-        for (Pair v : rGraph.GetAdjList(curVertex.first)) {
+        ignoreVertexCopy[curVertex.second] = true;
+        for (Pair v : rGraph.GetAdjList(curVertex.second)) {
             if(v.first != s) {
-                int RCapacityPathWithCurNeighbor = min(d[curVertex.first], v.second);
+                int RCapacityPathWithCurNeighbor;
+                if (curVertex.second == s) {
+                    RCapacityPathWithCurNeighbor = v.second;
+                }
+                else {
+                    if (v.second == 0) {
+                        continue;
+                    }
+                    RCapacityPathWithCurNeighbor = min(d[curVertex.second], v.second);
+                }
                 if (d[v.first] < RCapacityPathWithCurNeighbor) {
                     d[v.first] = RCapacityPathWithCurNeighbor;
-                    parent[v.first] = curVertex.first;
+                    parent[v.first] = curVertex.second;
                     MaxQueue.push(make_pair(d[v.first], v.first));
                 }
             }
@@ -85,26 +95,27 @@ bool FordFulkersonAlgorithm::DijkstraModificationToFindMaximumFlowPath(Graph rGr
 
 }
 
-void FordFulkersonAlgorithm::initDijkstra(vector<int>& d,vector<int>& p,int s,int t){
+void FordFulkersonAlgorithem::initDijkstra(vector<int>& d,vector<int>& p,int s,int t){
     d.push_back(INT_MAX);
     p[s] = -1;
-    for(int i = 0 ; i < d.size(); i++){
+    for(int i = 0 ; i < p.size(); i++){
         if (i != s){
             d.push_back(INT_MIN);
-            ignoreVertexCopy.push_back(false);
+           
             p[i] = -1;
 
         }
+        ignoreVertexCopy.push_back(false);
     }
 }
 
-Edge FordFulkersonAlgorithm::makeEdge(int u, int v, int c)
+Edge FordFulkersonAlgorithem::makeEdge(int u, int v, int c)
 {
     Edge edge = { u, v, c };
     return edge;
 }
 
-void FordFulkersonAlgorithm::buildPriorityQueue(vector<int> &d, vector<int> &p, int s, int t) {
+void FordFulkersonAlgorithem::buildPriorityQueue(vector<int> &d, vector<int> &p, int s, int t) {
     d[s] = 0;
     p[s] = -1;
     MaxQueue.push(make_pair(d[s],s));
@@ -117,7 +128,7 @@ void FordFulkersonAlgorithm::buildPriorityQueue(vector<int> &d, vector<int> &p, 
 
 }
 
-int  FordFulkersonAlgorithm::getCapacityFromPair(vector<Pair> const& AdjListU, int v)
+int  FordFulkersonAlgorithem::getCapacityFromPair(vector<Pair> const& AdjListU, int v)
 {
     int capacity = 0;
     for (Pair w : AdjListU)
@@ -130,15 +141,11 @@ int  FordFulkersonAlgorithm::getCapacityFromPair(vector<Pair> const& AdjListU, i
     return capacity;
 }
 
-// Returns the maximum flow from s to t in the given graph
-int FordFulkersonAlgorithem::fordFulkerson(Graph graph, int s, int t)
+int FordFulkersonAlgorithem::fordFulkerson(Graph & graph, int s, int t, bool searchMode)
 {
     int n = graph.GraphSize();
     int u, v;
 
-    // Create a residual graph and fill the residual graph
-    // with given capacities in the original graph as
-    // residual capacities in residual graph
     vector<Edge> points;
     for (int u = 0; u < n; u++)
     {
@@ -150,18 +157,18 @@ int FordFulkersonAlgorithem::fordFulkerson(Graph graph, int s, int t)
         }
     }
     Graph rGraph(points, n);
-        // Residual graph where rGraph
-             // indicates residual capacity of edge
-             // from i to j (if there is an edge. If
-             // rGraph[i][j] is 0, then there is not)
-    int* parent = new int[n]; // This array is filled by BFS and to
-                   // store path
+    vector<int> parent;
+
+    for (int i = 0; i < n; i++)
+    {
+        parent.push_back(-1);
+    }
 
     int max_flow = 0; // There is no flow initially
 
     // Augment the flow while there is path from source to
     // sink
-    while (bfs(rGraph, s, t, parent)) {
+    while (searchMode ? bfs(rGraph, s, t, parent) : DijkstraModificationToFindMaximumFlowPath(rGraph, s, t, parent)) {
         // Find minimum residual capacity of the edges along
         // the path filled by BFS. Or we can say find the
         // maximum flow through the path found.
@@ -186,6 +193,8 @@ int FordFulkersonAlgorithem::fordFulkerson(Graph graph, int s, int t)
     }
 
     // Return the overall flow
+    bfs(rGraph, s, t, parent);
+    graph.MinCut(parent, s, t, n);
     return max_flow;
 }
 
@@ -215,10 +224,18 @@ bool CheckPoints(int u, vector<Pair> const& AdjListV)
     return true;
 }
 
-void initVisitedArr(bool* visited, int n) 
+void initVisitedArr(vector<bool> & visited, int n) 
 {
     for (int i = 0; i < n; i++)
     {
-        visited[i] = 0;
+        visited.push_back(0);
+    }
+}
+
+void ResetParents(vector<int>& parent)
+{
+    for (int i = 0; i < parent.size(); i++) 
+    {
+        parent.at(i) = -1;
     }
 }
