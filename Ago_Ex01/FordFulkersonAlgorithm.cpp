@@ -6,6 +6,8 @@
 
 using namespace std;
 int getCapacityFromPair(vector<Pair> const& AdjListU, int v);
+bool CheckPoints(int u, vector<Pair> const& AdjListV);
+void initVisitedArr(bool* visited, int n);
 
 
 /* Returns true if there is a path from source 's' to sink
@@ -16,7 +18,9 @@ bool bfs(Graph &rGraph, int s, int t, int parent[])
     // Create a visited array and mark all vertices as not
     // visited
     bool* visited = new bool[rGraph.GraphSize()];
-    memset(visited, 0, sizeof(visited));
+    //memset(visited, 0, sizeof(visited));
+    initVisitedArr(visited, rGraph.GraphSize());
+
 
     // Create a queue, enqueue source vertex and mark source
     // vertex as visited
@@ -67,7 +71,8 @@ int FordFulkersonAlgorithem::fordFulkerson(Graph graph, int s, int t)
         for (Pair v : graph.GetAdjList(u)) 
         {
             points.push_back(Graph::makeEdge(u, v.first, v.second));
-            points.push_back(Graph::makeEdge(v.first, u, 0));
+            if(CheckPoints(u, graph.GetAdjList(v.first)))
+                points.push_back(Graph::makeEdge(v.first, u, 0));
         }
     }
     Graph rGraph(points, n);
@@ -121,4 +126,24 @@ int getCapacityFromPair(vector<Pair> const& AdjListU, int v)
         }
     }
     return capacity;
+}
+
+bool CheckPoints(int u, vector<Pair> const& AdjListV)
+{
+    for (Pair w : AdjListV)
+    {
+        if (w.first == u  && w.second > 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+void initVisitedArr(bool* visited, int n) 
+{
+    for (int i = 0; i < n; i++)
+    {
+        visited[i] = 0;
+    }
 }

@@ -30,8 +30,8 @@ int main()
 
 	for (int w = 0; w < m; w++)
 	{
-		i = atoi(strings[0].c_str());
-		j = atoi(strings[1].c_str());
+		i = atoi(strings[0].c_str()) - 1;
+		j = atoi(strings[1].c_str()) - 1;
 		c = atoi(strings[2].c_str());
 		edges.push_back(Graph::makeEdge(i, j, c));
 		strings = InputTest::GettingParams(3, false);
@@ -39,5 +39,6 @@ int main()
 
 	Graph graph(edges, n);
 
-	max_flow = FordFulkersonAlgorithem::fordFulkerson(graph, s, t);
+	max_flow = FordFulkersonAlgorithem::fordFulkerson(graph, s - 1, t - 1);
+	cout << "Max flow is: " << max_flow << endl;
 }
