@@ -140,11 +140,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Edge.h" />
+    <ClInclude Include="FordFulkersonAlgorithem.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="InputTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FordFulkersonAlgorithm.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="InputTest.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

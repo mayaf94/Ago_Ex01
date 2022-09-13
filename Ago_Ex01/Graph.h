@@ -21,6 +21,7 @@ public:
 	void RemoveEdge(int u, int v);
 	int GraphSize() { return adjList.size(); }
 	void ChangeCapacity(int u, int v, int c, bool operation);
+	static Edge makeEdge(int u, int v, int c);
 };
 
 #endif

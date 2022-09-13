@@ -2,9 +2,13 @@
 #include <limits.h>
 #include <queue>
 #include <string.h>
-#include "Graph.h"
+#include "FordFulkersonAlgorithem.h"
 
 using namespace std;
+int getCapacityFromPair(vector<Pair> const& AdjListU, int v);
+bool CheckPoints(int u, vector<Pair> const& AdjListV);
+void initVisitedArr(bool* visited, int n);
+
 
 /* Returns true if there is a path from source 's' to sink
   't' in residual graph. Also fills parent[] to store the
@@ -14,7 +18,9 @@ bool bfs(Graph &rGraph, int s, int t, int parent[])
     // Create a visited array and mark all vertices as not
     // visited
     bool* visited = new bool[rGraph.GraphSize()];
-    memset(visited, 0, sizeof(visited));
+    //memset(visited, 0, sizeof(visited));
+    initVisitedArr(visited, rGraph.GraphSize());
+
 
     // Create a queue, enqueue source vertex and mark source
     // vertex as visited
@@ -51,7 +57,7 @@ bool bfs(Graph &rGraph, int s, int t, int parent[])
 }
 
 // Returns the maximum flow from s to t in the given graph
-int fordFulkerson(Graph graph, int s, int t)
+int FordFulkersonAlgorithem::fordFulkerson(Graph graph, int s, int t)
 {
     int n = graph.GraphSize();
     int u, v;
@@ -64,8 +70,9 @@ int fordFulkerson(Graph graph, int s, int t)
     {
         for (Pair v : graph.GetAdjList(u)) 
         {
-            points.push_back(makeEdge(u, v.first, v.second));
-            points.push_back(makeEdge(v.first, u, 0));
+            points.push_back(Graph::makeEdge(u, v.first, v.second));
+            if(CheckPoints(u, graph.GetAdjList(v.first)))
+                points.push_back(Graph::makeEdge(v.first, u, 0));
         }
     }
     Graph rGraph(points, n);
@@ -108,12 +115,6 @@ int fordFulkerson(Graph graph, int s, int t)
     return max_flow;
 }
 
-Edge makeEdge(int u, int v, int c)
-{
-    Edge edge = { u, v, c };
-    return edge;
-}
-
 int getCapacityFromPair(vector<Pair> const& AdjListU, int v)
 {
     int capacity = 0;
@@ -125,4 +126,24 @@ int getCapacityFromPair(vector<Pair> const& AdjListU, int v)
         }
     }
     return capacity;
+}
+
+bool CheckPoints(int u, vector<Pair> const& AdjListV)
+{
+    for (Pair w : AdjListV)
+    {
+        if (w.first == u  && w.second > 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+void initVisitedArr(bool* visited, int n) 
+{
+    for (int i = 0; i < n; i++)
+    {
+        visited[i] = 0;
+    }
 }
